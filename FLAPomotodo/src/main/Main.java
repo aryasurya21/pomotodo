@@ -1,8 +1,15 @@
 package main;
-import frame.Frame;
+
+import facade.PomotodoFacade;;
 
 public class Main {
-	public static void main(String[] args) {
-		new Frame();
+	
+	public Main() {
+		 PomotodoFacade.getInstance().runApp(); 
 	}
+	
+	public static void main(String[] args) { 
+		 new Main();
+	 }
+  
 }

@@ -1,40 +1,57 @@
 package composite;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
 
-import builder.Director;
-import builder.TaskBuilder;
-import frame.Frame;
+import java.io.Serializable;
+import java.util.ArrayList;
+import facade.PomotodoFacade;
+import timer.Timer;
+import timer.BlankTimer;
+import timer.WorkTimer;
 
-public class Task extends Element implements ActionListener {
-	private Vector<Element> elements;
+public final class Task implements Serializable {
+	public String taskName;
+	public int level;
+	private Task parentTask;
+	public ArrayList<Task> childTasks;
+	public Timer timer;
 
-	public void addTask(Element e) {
-		elements.add(e);
+	public Task(Task task) {
+		this.taskName = task.taskName;
+		this.level = task.level;
+		this.parentTask = task.parentTask;
+		this.timer = task.timer;
+		this.childTasks = new ArrayList <Task>();
+		for (Task t : task.childTasks) {
+			this.childTasks.add(new Task(t));
+		}
 	}
 
-	@Override
-	public void addComponent(Element e) {
-		// TODO Auto-generated method stub
-		elements.add(e);
+	public Task(String taskname, Task t) {
+		this.childTasks = new ArrayList<Task>();
+		this.taskName = taskname;
+		this.timer = new BlankTimer();
+		
+		if (t != null) {
+			this.level = t.level + 1;
+			this.parentTask = t;
+		} else {
+			this.parentTask = null;
+			this.level = 1;
+		}
 	}
 
-	@Override
-	public void removeComponent(Element e) {
-		// TODO Auto-generated method stub
-		elements.removeElement(e);
+	public void setWorkTimer() {
+		this.timer = new WorkTimer(PomotodoFacade.getInstance().getTime());
 	}
 
-	@Override
-	public void setState(Element e) {
-		// TODO Auto-generated method stub
-		//manggil cara ngubah statenya nnti
+	public void setNoWorkTimer() {
+		this.timer = new BlankTimer();
+	}
+	
+	public int getLevel() {
+		return level;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("(to be implemented) adding new task..");
+	public String getTaskName() {
+		return taskName;
 	}
 }
